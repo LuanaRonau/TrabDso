@@ -3,7 +3,7 @@ class Funcionario():
         self.__nome = nome
         self.__cpf = cpf
         self.__data_nasc = str
-        self.__atividade = True
+        self.__atividade = False
 
     @property
     def nome(self):
