@@ -1,17 +1,19 @@
-from cargo import Cargo
-from funcionario import Funcionario
+from entidade.cargo import Cargo
+from entidade.funcionario import Funcionario
+from datetime import date
 
-class MudCargo:
+class MudancaCargo:
 
-    def __init__(self, cargo_novo: Cargo,
-                 cargo_antigo: Cargo,
-                 funcionario: Funcionario,
-                 data: str):
+    def __init__(self, id: int, cargo_antigo: Cargo, cargo_novo: Cargo, funcionario: Funcionario, data: date):
+        self.__id = id
         self.__cargo_novo = cargo_novo
         self.__cargo_antigo = cargo_antigo
         self.__funcionario = funcionario
         self.__data = data
 
+    @property
+    def id(self):
+        return self.__id
 
     @property
     def cargo_novo(self):
@@ -45,8 +47,8 @@ class MudCargo:
             self.__funcionario = funcionario
 
     @data.setter
-    def data(self, data: str):
-        if isinstance(data, str):
+    def data(self, data: date):
+        if isinstance(data, date):
             self.__data = data
 
 

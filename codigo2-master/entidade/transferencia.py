@@ -1,16 +1,23 @@
-from filial import Filial
-from funcionario import Funcionario
+from entidade.filial import Filial
+from entidade.funcionario import Funcionario
+from datetime import date
+
 
 class Transferencia:
 
-    def __init__(self, funcionario: Funcionario,
+    def __init__(self, id: int, funcionario: Funcionario,
                  filial_antiga: Filial,
                  filial_nova: Filial,
-                 data: str):
+                 data: date):
+        self.__id = id
         self.__funcionario = funcionario
         self.__filial_antiga = filial_antiga
         self.__filial_nova = filial_nova
         self.__data = data
+
+    @property
+    def id(self):
+        return self.__id
 
     @property
     def funcionario(self):
@@ -44,8 +51,8 @@ class Transferencia:
         return self.__data
 
     @data.setter
-    def data(self, data: str):
-        if isinstance(data, str):
+    def data(self, data: date):
+        if isinstance(data, date):
             self.__data = data
 
 

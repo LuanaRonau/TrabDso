@@ -8,9 +8,6 @@ from telas.tela_sistema import TelaSistema
 from exception.repeticao import Repeticao
 from exception.naoExistencia import NaoExistencia
 from datetime import date
-from controladores.controlador_cargo import ControladorCargo
-from controladores.controlador_transf import ControladorTransf
-
 
 
 class ControladorSistema:
@@ -18,24 +15,13 @@ class ControladorSistema:
     def __init__(self):
         self.__tela_sistema = TelaSistema()
         self.__controlador_gerente = ControladorGerente()
-        self.__controlador_contrato = ControladorContrato(self)
+        self.__controlador_contrato = ControladorContrato()
         self.__controlador_fun_comum = ControladorFunComum()
-        self.__controlador_cargo = ControladorCargo(self)
-        self.__controlador_transf = ControladorTransf(self)
-        self.__controlador_mud_cargo = ControladorMudCargo(self)
         self.__lista_filiais = []
 
     @property
     def controlador_contrato(self):
         return self.__controlador_contrato
-
-    @property
-    def controlador_transf(self):
-        return self.__controlador_transf
-
-    @property
-    def controlador_mud_cargo(self):
-        return self.__controlador_mud_cargo
 
     @property
     def controlador_gerente(self):
@@ -45,14 +31,10 @@ class ControladorSistema:
     def controlador_fun_comum(self):
         return self.__controlador_fun_comum
 
-    @property
-    def controlador_cargo(self):
-        return self.__controlador_cargo
-
     def inicializa_sistema(self):
         lista_opcoes = {1: self.adicionar_filial, 2: self.excluir_filial,
                         3: self.modificar_filial, 4: self.listar_por_atv,
-                        5: self.modificar_cargos, 0: self.sair}
+                        0: self.sair}
 
         while True:
             opcao_escolhida = self.__tela_sistema.mostra_opcoes()
@@ -77,7 +59,7 @@ class ControladorSistema:
                           'empregador': infos_gerencia['empregador'], 'id': infos_gerencia['id']}
         self.__controlador_contrato.incluir_contrato(dados_contrato)
 
-        self.__tela_sistema.mostra_mensagem('Filial cadastrada com sucesso.')
+        print('Filial cadastrada com sucesso.')
 
     def excluir_filial(self):
         self.__tela_sistema.mostra_mensagem('\n=== EXCLUSÃO DE FILIAIS ===\nRealize a busca.')
@@ -97,9 +79,6 @@ class ControladorSistema:
                 self.__tela_sistema.listagem(_.cep, _.cidade, _.gerente.nome)
         else:
             self.__tela_sistema.mostra_mensagem('Lista vazia.\n')
-
-    def modificar_cargos(self):
-        ControladorCargo(self).abre_tela()
 
     # Método de checagem de repetição
     def checagem_repeticao_cep(self, cep):

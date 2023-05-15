@@ -1,5 +1,5 @@
 class Cargo:
-    def __init__(self, id, titulo, salario):
+    def __init__(self, id: int, titulo: str, salario: int):
         self.__id = id
         self.__titulo = titulo
         self.__salario = salario
@@ -22,6 +22,6 @@ class Cargo:
             self.__titulo = titulo
 
     @salario.setter
-    def salario(self, salario: float):
-        if isinstance(salario, float):
+    def salario(self, salario: int):
+        if isinstance(salario, int):
             self.__salario = salario

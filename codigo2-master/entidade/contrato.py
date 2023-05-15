@@ -1,19 +1,17 @@
-from funcionario import Funcionario
-from fun_comum import FunComum
-from gerente import Gerente
-from filial import Filial
-from mud_cargo import MudancaCargo
-from transferencia import Transferencia
-from cargo import Cargo
-from datetime import datetime, date
 from exception.jaEAFilialAtualException import JaEAFilialAtualException
 from exception.jaEOCargoAtualException import JaEOCargoAtualException
-
+from datetime import date
+from entidade.funcionario import Funcionario
+from entidade.gerente import Gerente
+from entidade.filial import Filial
+from entidade.mud_cargo import MudancaCargo
+from entidade.transferencia import Transferencia
+from entidade.cargo import Cargo
 
 class Contrato:
     def __init__(self, id: int, data_inicio: date, cargo: Cargo, empregado: Funcionario, filial: Filial, empregador: Gerente):
         self.__id = id
-        self.__data_inicio = date
+        self.__data_inicio = data_inicio
         self.__data_final = None
         self.__cargo = cargo
         self.__empregado = empregado
@@ -64,6 +62,9 @@ class Contrato:
 
     @data_final.setter
     def data_final(self, data_final: date):
+        if (data_final == None):
+            if (not isinstance(self.__empregado, Gerente)):
+                self.__filial.rem_funcionario(self.__empregado)
         self.__data_final = data_final
 
     @cargo.setter
@@ -73,33 +74,46 @@ class Contrato:
     @empregado.setter
     def empregado(self, empregado: Funcionario):
         self.__empregado = empregado
+        if (isinstance(empregado, Gerente)):
+            self.__filial.gerente = empregado
+        else:
+            self.__filial.add_funcionario(empregado)
 
     @filial.setter
     def filial(self, filial: Filial):
-        self.__filial = filial
+        if (isinstance(self.__empregado, Gerente)):
+            self.__filial = filial
+            self.__filial.gerente = self.__empregador
+        else:
+            self.__filial.rem_funcionario(self.__empregado)
+            self.__filial = filial
+            self.__filial.add_funcionario(self.__empregado)
 
     @empregador.setter
-    def empregador(self, empregador: Gerente):
+    def empregador(self, empregador):
         self.__empregador = empregador
+        self.__filial.gerente = empregador
 
-    def add_transferencia(self, id: int, filial_nova: Filial, funcionario: Funcionario, data: Date):
+    def add_transferencia(self, id: int, filial_nova: Filial, funcionario: Funcionario, data: date):
         if (filial_nova == self.__filial):
             raise JaEAFilialAtualException(filial_nova)
-        self.__transferencias.append(Transferencia(id, self.__filial, filial_nova, funcionario, data))
+        self.__transferencias.append(Transferencia(id, funcionario, self.__filial, filial_nova, data))
         self.__filial = filial_nova
 
-    def add_mud_cargo(self, id: int, cargo_novo: Cargo, funcionario: Funcionario, data: Date):
+    def add_mud_cargo(self, id: int, cargo_novo: Cargo, funcionario: Funcionario, data: date):
         if (cargo_novo == self.__cargo):
             raise JaEOCargoAtualException(cargo_novo)
-        self.__mud_cargos.append(MudCargo(id, self.__cargo, cargo_novo, funcionario, data))
+        self.__mud_cargos.append(MudancaCargo(id, self.__cargo, cargo_novo, funcionario, data))
         self.__cargo = cargo_novo
         
         if (cargo_novo.titulo == "Gerente"):
             self.__empregado = funcionario
             self.__empregador = "Empresa"
 
-    def rem_transferencia(self, transferencia):
+    def rem_transferencia(self, transferencia: Transferencia):
         self.__transferencias.remove(transferencia)
+        self.__filial = transferencia.filial_antiga
 
-    def rem_mud_cargo(self, mud_cargo):
+    def rem_mud_cargo(self, mud_cargo: MudancaCargo):
         self.__mud_cargos.remove(mud_cargo)
+        self.__cargo = mud_cargo.cargo_antigo
